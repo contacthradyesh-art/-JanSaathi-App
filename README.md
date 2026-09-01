@@ -33,6 +33,7 @@ Install **Expo Go** on your Android/iPhone, then scan the QR code shown by Expo.
 - **Eligibility Checker** — Four simple choice-based questions with session-only answers and basic guidance
 - **Application Assistant** — Generic step-by-step application guidance/checklist; no form automation
 - **Application Status Tracker** — Demo/local tracker with scheme dropdown, date picker, generic “प्रक्रिया में / In progress” status, AsyncStorage persistence, and delete action; no real status lookup
+- **Expert Help** — Contact/help screen with placeholder helpline, dialer action, and static FAQ; no live chat or backend
 - **Document Guide** — Checklist to prepare required documents
 - **Center Locator** — Static nearby service-center list with call action
 
@@ -40,7 +41,7 @@ Install **Expo Go** on your Android/iPhone, then scan the QR code shown by Expo.
 
 - Voice Query
 - Live Application Tracking
-- Expert Help
+- Expert Help backend / live connection
 - Community Q&A
 
 ## Folder Structure
@@ -60,4 +61,4 @@ JanSaathi-App/
 
 **MVP: Done and documented.**
 
-The current MVP flow includes language selection → onboarding → home → search/category filter → scheme detail → eligibility checker → application assistant → application status tracker → document guide → center locator.
+The current MVP flow includes language selection → onboarding → home → search/category filter → scheme detail → eligibility checker → application assistant → application status tracker → expert help → document guide → center locator.
