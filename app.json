@@ -1,0 +1,9 @@
+{
+  "expo": {
+    "name": "JanSaathi / Sahayak App",
+    "slug": "jansathi-app",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light"
+  }
+}
