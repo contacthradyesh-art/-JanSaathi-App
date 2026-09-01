@@ -1,0 +1,10 @@
+[
+  {"name":"CSC Seva Kendra — Khalilabad","address":"Main Market, Khalilabad, Uttar Pradesh","distance":"2 km","timing":"10:00 AM – 6:00 PM","contactNumber":"9876543210","state":"Uttar Pradesh"},
+  {"name":"Jan Seva Kendra — Basti","address":"Station Road, Basti, Uttar Pradesh","distance":"8 km","timing":"10:00 AM – 6:00 PM","contactNumber":"9876543211","state":"Uttar Pradesh"},
+  {"name":"Digital Seva Center — Gorakhpur","address":"Civil Lines, Gorakhpur, Uttar Pradesh","distance":"12 km","timing":"9:30 AM – 6:30 PM","contactNumber":"9876543212","state":"Uttar Pradesh"},
+  {"name":"CSC Digital Center — Lucknow","address":"Aliganj, Lucknow, Uttar Pradesh","distance":"18 km","timing":"10:00 AM – 5:30 PM","contactNumber":"9876543213","state":"Uttar Pradesh"},
+  {"name":"Jan Seva Kendra — Varanasi","address":"Lanka, Varanasi, Uttar Pradesh","distance":"25 km","timing":"10:00 AM – 6:00 PM","contactNumber":"9876543214","state":"Uttar Pradesh"},
+  {"name":"CSC Seva Kendra — Pune","address":"Shivajinagar, Pune, Maharashtra","distance":"3 km","timing":"10:00 AM – 6:00 PM","contactNumber":"9876543215","state":"Maharashtra"},
+  {"name":"Maha e-Seva Kendra — Mumbai","address":"Andheri East, Mumbai, Maharashtra","distance":"6 km","timing":"9:30 AM – 6:00 PM","contactNumber":"9876543216","state":"Maharashtra"},
+  {"name":"Digital Seva Center — Nagpur","address":"Sitabuldi, Nagpur, Maharashtra","distance":"9 km","timing":"10:00 AM – 6:00 PM","contactNumber":"9876543217","state":"Maharashtra"}
+]
