@@ -30,13 +30,13 @@ Install **Expo Go** on your Android/iPhone, then scan the QR code shown by Expo.
 - **Onboarding** — Simple 3-step introduction to the app
 - **Home + Search** — Categories and basic text search across schemes/services
 - **Scheme Detail** — Eligibility, required documents, and application guidance
+- **Eligibility Checker** — Four simple choice-based questions with session-only answers and basic guidance
 - **Document Guide** — Checklist to prepare required documents
 - **Center Locator** — Static nearby service-center list with call action
 
 ## Coming Soon / Next Phase
 
 - Voice Query
-- Eligibility Checker
 - Live Application Tracking
 - Expert Help
 - Community Q&A
@@ -88,4 +88,4 @@ JanSaathi-App/
 
 **MVP: Done and documented.**
 
-The current MVP has been manually tested on a real device using Expo Go across the complete flow: language selection → onboarding → home → search/category filter → scheme detail → document guide → center locator.
+The current MVP has been manually tested on a real device using Expo Go across the complete flow: language selection → onboarding → home → search/category filter → scheme detail → eligibility checker → document guide → center locator.
