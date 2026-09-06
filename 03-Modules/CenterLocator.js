@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Linking, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Linking, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import * as Location from 'expo-location';
 import centers from '../04-Data/centers.json';
 
@@ -30,21 +30,60 @@ export default function CenterLocator({ language, onBack }) {
     let active = true;
     async function loadLocation() {
       try {
+        if (Platform.OS === 'web') {
+          if (!('geolocation' in navigator)) {
+            throw new Error('Browser geolocation API is unavailable.');
+          }
+          console.log('[JanSaathi] Requesting browser location permission…');
+          navigator.geolocation.getCurrentPosition(
+            position => {
+              console.log('[JanSaathi] Browser location received:', position.coords.latitude, position.coords.longitude);
+              if (active) {
+                setUserLocation({ latitude: position.coords.latitude, longitude: position.coords.longitude });
+                setLocationState('located');
+                setErrorMessage('');
+              }
+            },
+            error => {
+              console.error('[JanSaathi] Browser geolocation error:', error.code, error.message, error);
+              if (active) {
+                const message = error.code === 1
+                  ? (hi ? 'लोकेशन की अनुमति नहीं मिली। Browser में location permission Allow करें।' : 'Location permission was denied. Allow location access in your browser.')
+                  : error.code === 2
+                    ? (hi ? 'आपकी लोकेशन उपलब्ध नहीं हो सकी।' : 'Your location could not be determined.')
+                    : (hi ? 'लोकेशन खोजने में समय लग रहा है।' : 'Location request timed out.');
+                setErrorMessage(message);
+                setLocationState('fallback');
+              }
+            },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 30000 }
+          );
+          return;
+        }
+
         const servicesEnabled = await Location.hasServicesEnabledAsync();
         if (!servicesEnabled) {
-          if (active) { setLocationState('fallback'); setErrorMessage(hi ? 'लोकेशन सेवा बंद है।' : 'Location services are off.'); }
-          return;
+          throw new Error('Location services are disabled.');
         }
+        console.log('[JanSaathi] Requesting native foreground location permission…');
         const permission = await Location.requestForegroundPermissionsAsync();
+        console.log('[JanSaathi] Native location permission status:', permission.status);
         if (permission.status !== Location.PermissionStatus.GRANTED) {
-          if (active) { setLocationState('fallback'); setErrorMessage(hi ? 'लोकेशन की अनुमति नहीं मिली।' : 'Location permission was not granted.'); }
-          return;
+          throw new Error(`Native location permission not granted: ${permission.status}`);
         }
         const current = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
-        if (active) { setUserLocation(current.coords); setLocationState('located'); }
+        console.log('[JanSaathi] Native location received:', current.coords.latitude, current.coords.longitude);
+        if (active) {
+          setUserLocation(current.coords);
+          setLocationState('located');
+          setErrorMessage('');
+        }
       } catch (error) {
-        console.warn(error);
-        if (active) { setLocationState('fallback'); setErrorMessage(hi ? 'लोकेशन नहीं मिल पाई।' : 'Could not get your location.'); }
+        console.error('[JanSaathi] Location request failed:', error);
+        if (active) {
+          setLocationState('fallback');
+          setErrorMessage(hi ? 'लोकेशन नहीं मिल पाई। Static list दिखाई जा रही है।' : 'Could not get your location. Showing the static list.');
+        }
       }
     }
     loadLocation();
@@ -53,11 +92,7 @@ export default function CenterLocator({ language, onBack }) {
 
   const sortedCenters = useMemo(() => {
     if (!userLocation) {
-      return centers.map((center, index) => ({
-        ...center,
-        calculatedDistance: FALLBACK_DISTANCES[index] || '—',
-        numericDistance: index,
-      }));
+      return centers.map((center, index) => ({ ...center, calculatedDistance: FALLBACK_DISTANCES[index] || '—', numericDistance: index }));
     }
     return centers.map(center => {
       const numericDistance = (typeof center.latitude === 'number' && typeof center.longitude === 'number')
@@ -95,10 +130,8 @@ export default function CenterLocator({ language, onBack }) {
       </View>
       {locationState === 'fallback' && (
         <View style={styles.fallbackBanner}>
-          <Text style={styles.fallbackIcon}>ℹ️</Text>
-          <Text style={styles.fallbackText}>
-            {hi ? 'Aapke paas ke centers dikhane ke liye location chahiye। लोकेशन उपलब्ध नहीं हुई, इसलिए static list दिखाई जा रही है।' : 'Location is needed to show nearby centers. Location was unavailable, so the static list is shown.'}
-          </Text>
+          <Text style={styles.fallbackIcon}>⚠️</Text>
+          <Text style={styles.fallbackText}>{errorMessage || (hi ? 'लोकेशन उपलब्ध नहीं हुई, इसलिए static list दिखाई जा रही है।' : 'Location was unavailable, so the static list is shown.')}</Text>
         </View>
       )}
       <ScrollView contentContainerStyle={styles.content}>
@@ -118,9 +151,7 @@ export default function CenterLocator({ language, onBack }) {
         ))}
         <View style={styles.note}>
           <Text style={styles.noteIcon}>ℹ️</Text>
-          <Text style={styles.noteText}>
-            {userLocation ? (hi ? 'दूरी आपकी वर्तमान लोकेशन से लगभग है।' : 'Distances are approximate from your current location.') : (hi ? 'नोट: लोकेशन उपलब्ध न होने पर पुरानी static दूरी दिखाई जाती है।' : 'Note: The previous static distances are shown when location is unavailable.')}
-          </Text>
+          <Text style={styles.noteText}>{userLocation ? (hi ? 'दूरी आपकी वर्तमान लोकेशन से लगभग है।' : 'Distances are approximate from your current location.') : (hi ? 'नोट: लोकेशन उपलब्ध न होने पर पुरानी static दूरी दिखाई जाती है।' : 'Note: The previous static distances are shown when location is unavailable.')}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
