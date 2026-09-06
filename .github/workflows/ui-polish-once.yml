@@ -1,0 +1,34 @@
+name: One-time UI polish
+
+on:
+  push:
+    paths:
+      - '.github/workflows/ui-polish-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Polish App search states
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('App.js')
+          s = p.read_text(encoding='utf-8')
+          old = "function SearchScreen({language,query,setQuery,category,results,onBack,onOpen}){const hi=language==='hi';const cat=CATEGORIES.find(x=>x[0]===category);return <SafeAreaView style={styles.screen}><View style={styles.searchScreen}><Pressable onPress={onBack} style={styles.back}><Text style={styles.backText}>‹ {hi?'वापस':'Back'}</Text></Pressable><Text style={styles.searchTitle}>{hi?'खोजें':'Search'}</Text><TextInput value={query} onChangeText={setQuery} placeholder={hi?'Scheme ya certificate khojein':'Search a scheme or certificate'} style={styles.inputText}/>{cat&&<Text style={styles.filter}>{hi?'श्रेणी':'Category'}: {hi?cat[2]:cat[3]}</Text>}<Text style={styles.count}>{results.length} {hi?'परिणाम':'results'}</Text><ScrollView contentContainerStyle={styles.results}>{results.map(item=>{const l=localize(item,language);return <Pressable key={item.id} onPress={()=>onOpen(item)} style={styles.resultCard}><Text style={styles.resultIcon}>{item.icon}</Text><View style={styles.resultText}><Text style={styles.resultName}>{l.name}</Text><Text style={styles.resultDesc}>{l.shortDescription}</Text></View><Text style={styles.arrow}>›</Text></Pressable>})}</ScrollView></View></SafeAreaView>}"
+          new = "function SearchScreen({language,query,setQuery,category,results,onBack,onOpen}){const hi=language==='hi';const cat=CATEGORIES.find(x=>x[0]===category);const [searching,setSearching]=useState(false);useEffect(()=>{setSearching(true);const timer=setTimeout(()=>setSearching(false),180);return()=>clearTimeout(timer);},[query,category]);return <SafeAreaView style={styles.screen}><View style={styles.searchScreen}><Pressable onPress={onBack} style={styles.back}><Text style={styles.backText}>‹ {hi?'वापस':'Back'}</Text></Pressable><Text style={styles.searchTitle}>{hi?'खोजें':'Search'}</Text><TextInput value={query} onChangeText={setQuery} placeholder={hi?'Scheme ya certificate khojein':'Search a scheme or certificate'} style={styles.inputText}/>{cat&&<Text style={styles.filter}>{hi?'श्रेणी':'Category'}: {hi?cat[2]:cat[3]}</Text>}<Text style={styles.count}>{results.length} {hi?'परिणाम':'results'}</Text>{searching?<View style={{flex:1,alignItems:'center',justifyContent:'center',paddingVertical:56}}><ActivityIndicator size=\"small\"/><Text style={{marginTop:10,fontSize:15,lineHeight:21,color:'#607D68'}}>{hi?'खोज रहे हैं…':'Searching…'}</Text></View>:results.length===0?<View style={{alignItems:'center',justifyContent:'center',paddingVertical:56,paddingHorizontal:24}}><Text style={{fontSize:42,lineHeight:50}}>🔎</Text><Text style={{marginTop:12,fontSize:20,lineHeight:27,fontWeight:'800',textAlign:'center',color:'#172018'}}>{hi?'कुछ नहीं मिला':'Nothing found'}</Text><Text style={{marginTop:6,fontSize:14,lineHeight:21,textAlign:'center',color:'#607D68'}}>{hi?'दूसरा नाम या शब्द खोजकर देखें।':'Try another name or keyword.'}</Text></View>:<ScrollView contentContainerStyle={styles.results}>{results.map(item=>{const l=localize(item,language);return <Pressable key={item.id} onPress={()=>onOpen(item)} style={styles.resultCard} hitSlop={4}><Text style={styles.resultIcon}>{item.icon}</Text><View style={styles.resultText}><Text style={styles.resultName}>{l.name}</Text><Text style={styles.resultDesc}>{l.shortDescription}</Text></View><Text style={styles.arrow}>›</Text></Pressable>})}</ScrollView>}</View></SafeAreaView>}"
+          if old not in s:
+              raise SystemExit('SearchScreen pattern not found; no changes made')
+          p.write_text(s.replace(old,new),encoding='utf-8')
+      - name: Commit polish
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add App.js
+          git diff --cached --quiet && exit 0
+          git commit -m 'ui: add polished search loading and empty states'
+          git push
