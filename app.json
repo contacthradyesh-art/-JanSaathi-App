@@ -4,6 +4,14 @@
     "slug": "jansathi-app",
     "version": "0.1.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "light"
+    "userInterfaceStyle": "light",
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Aapke paas ke centers dikhane ke liye location chahiye"
+        }
+      ]
+    ]
   }
 }
